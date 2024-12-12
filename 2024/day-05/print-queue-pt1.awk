@@ -1,7 +1,7 @@
 $0 ~ /^[0-9]+\|[0-9]+$/ { 
     split($0, rule, "|")
-    rules[rule[1]rule[2]] = "before"
-    rules[rule[2]rule[1]] = "after"
+    rules[rule[1]"|"rule[2]] = "before"
+    rules[rule[2]"|"rule[1]] = "after"
 }
 $0 ~ /^[0-9]+,/ {
     is_valid = 1
@@ -11,7 +11,7 @@ $0 ~ /^[0-9]+,/ {
         if (i > 1) {
             for (j = 1; j < i; j++) {
                 #print "check if " page_updates[i] " is after " page_updates[j]
-                if (rules[page_updates[i]page_updates[j]] == "before") {
+                if (rules[page_updates[i]"|"page_updates[j]] == "before") {
                     is_valid = 0
                     break
                 }
@@ -20,7 +20,7 @@ $0 ~ /^[0-9]+,/ {
         if (i < length(page_updates)) {
             for (j = i + 1; j <= length(page_updates); j++) {
                 #print "check if " page_updates[i] " is before " page_updates[j]
-                if (rules[page_updates[i]page_updates[j]] == "after") {
+                if (rules[page_updates[i]"|"page_updates[j]] == "after") {
                     is_valid = 0
                     break
                 }
@@ -34,4 +34,6 @@ $0 ~ /^[0-9]+,/ {
         total += page_updates[middle]
     }
 }
-END { print total }
+END {
+    print total
+}
